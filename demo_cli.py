@@ -36,6 +36,13 @@ if __name__ == '__main__':
         "Optional random number seed value to make toolbox deterministic.")
     parser.add_argument("--no_mp3_support", action="store_true", help=\
         "If True, disallows loading mp3 files to prevent audioread errors when ffmpeg is not installed.")
+    
+    #
+    # Add arguments for path to reference voice file and text to be cloned.
+    #
+    parser.add_argument("--path", action="store_true", help="Reference voice: enter an audio filepath of a voice to be cloned (mp3, wav, m4a, flac, ...):\n")
+    parser.add_argument("--text", action="store_true", help="Write a sentence (+-20 words) to be synthesized:\n")
+    #
     args = parser.parse_args()
     print_args(args, parser)
     if not args.no_sound:
@@ -138,7 +145,10 @@ if __name__ == '__main__':
             # Get the reference audio filepath
             message = "Reference voice: enter an audio filepath of a voice to be cloned (mp3, " \
                       "wav, m4a, flac, ...):\n"
-            in_fpath = Path(input(message).replace("\"", "").replace("\'", ""))
+#             Uncomment next line to take path as input on console
+#             in_fpath = Path(input(message).replace("\"", "").replace("\'", ""))
+#             Take path as argument
+            in_fpath = os.path.exists(args.path)
 
             if in_fpath.suffix.lower() == ".mp3" and args.no_mp3_support:
                 print("Can't Use mp3 files please try again:")
@@ -163,7 +173,9 @@ if __name__ == '__main__':
             
             
             ## Generating the spectrogram
-            text = input("Write a sentence (+-20 words) to be synthesized:\n")
+#             text = input("Write a sentence (+-20 words) to be synthesized:\n")
+#           Take text input as an argument
+            text = args.text
             
             # If seed is specified, reset torch seed and force synthesizer reload
             if args.seed is not None:
